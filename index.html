@@ -40,7 +40,7 @@
     font-size: 14px; color: rgba(255,255,255,0.7); letter-spacing: 2px;
   }
 
-  #map { flex: 1; width: 100%; }
+  #map { flex: 1; width: 100%; min-height: 400px; }
 
   .ftr {
     background: #0d1117; padding: 8px 20px; text-align: center;
@@ -88,8 +88,7 @@
   .panel-link {
     font-family: 'Oswald', sans-serif;
     font-weight: 700; font-size: 14px; letter-spacing: 0.5px; text-transform: uppercase;
-    text-decoration: none;
-    transition: opacity 0.15s;
+    text-decoration: none; transition: opacity 0.15s;
   }
   .panel-link:hover { opacity: 0.75; text-decoration: underline; }
   .panel-link.pn3 { color: #ff8a8a; }
@@ -184,6 +183,8 @@ function buildPopup(r) {
   return h;
 }
 
+// Use fixed center and zoom instead of fitBounds
+// This guarantees the same view regardless of container size
 var map = L.map('map', {
   center: [40.55, -81.5],
   zoom: 7,
@@ -200,9 +201,6 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
   maxZoom: 19
 }).addTo(map);
 
-var bounds = L.latLngBounds(regions.map(function(r) { return [r.lat, r.lng]; }));
-map.fitBounds(bounds.pad(0.15));
-
 regions.forEach(function(r) {
   var icon = L.divIcon({
     className: 'hub',
@@ -213,6 +211,28 @@ regions.forEach(function(r) {
   });
   L.marker([r.lat, r.lng], { icon: icon }).addTo(map)
     .bindPopup(buildPopup(r), { maxWidth: 300 });
+});
+
+// Handle iframe resize — keep rechecking size
+function fixMap() {
+  map.invalidateSize();
+  map.setView([40.55, -81.5], 7);
+}
+setTimeout(fixMap, 100);
+setTimeout(fixMap, 300);
+setTimeout(fixMap, 600);
+setTimeout(fixMap, 1000);
+setTimeout(fixMap, 2000);
+setTimeout(fixMap, 4000);
+
+// Also listen for any resize events
+window.addEventListener('resize', function() {
+  setTimeout(fixMap, 100);
+});
+
+// Message from parent frame
+window.addEventListener('message', function() {
+  setTimeout(fixMap, 100);
 });
 </script>
 </body>
