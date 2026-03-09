@@ -1,0 +1,367 @@
+<!-- PAFL Team Map - Paste into FootballShift Embed block -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700;800&family=Barlow+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  .pafl-map-wrap * { margin: 0; padding: 0; box-sizing: border-box; }
+  .pafl-map-wrap {
+    width: 100%;
+    max-width: 960px;
+    margin: 20px auto;
+    font-family: 'Oswald', sans-serif;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .pafl-map-header {
+    background: linear-gradient(180deg, #0d1117 0%, #161b22 100%);
+    padding: 16px 20px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    border-bottom: 3px solid #c5a44e;
+  }
+  .pafl-map-title {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 800;
+    font-size: clamp(20px, 3vw, 30px);
+    color: #fff;
+    letter-spacing: 3px;
+  }
+  .pafl-map-sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: clamp(11px, 1.5vw, 15px);
+    letter-spacing: 4px;
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase;
+  }
+  .pafl-map-legend { display: flex; gap: 16px; flex-wrap: wrap; }
+  .pafl-map-legend-item { display: flex; align-items: center; gap: 6px; }
+  .pafl-map-legend-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.5);
+  }
+  .pafl-map-legend-dot.pafl-l3a { background: #e74c3c; }
+  .pafl-map-legend-dot.pafl-l2a { background: #3498db; }
+  .pafl-map-legend-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 14px;
+    color: rgba(255,255,255,0.7); letter-spacing: 2px;
+  }
+  #pafl-team-map {
+    width: 100%;
+    height: 0;
+    padding-bottom: 72%;
+    position: relative;
+  }
+  .pafl-map-footer {
+    background: #0d1117;
+    padding: 10px 20px;
+    text-align: center;
+    border-top: 1px solid rgba(197,164,78,0.3);
+  }
+  .pafl-map-footer-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 500; font-size: 13px;
+    letter-spacing: 3px; color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+  }
+  .pafl-map-wrap .leaflet-control-attribution { display: none !important; }
+  .pafl-map-wrap .leaflet-control-zoom { display: none !important; }
+
+  /* City hub marker */
+  .pafl-city-hub {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+  }
+  .pafl-hub-dot {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #c5a44e 0%, #a08030 100%);
+    border: 3px solid #fff;
+    box-shadow: 0 0 14px rgba(197,164,78,0.7), 0 0 30px rgba(197,164,78,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .pafl-hub-dot:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 20px rgba(197,164,78,0.9), 0 0 40px rgba(197,164,78,0.5);
+  }
+  .pafl-hub-count {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 800;
+    font-size: 11px;
+    color: #000;
+    line-height: 1;
+  }
+  .pafl-hub-name {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: #fff;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 4px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.7);
+    white-space: nowrap;
+  }
+
+  /* Expanded team list popup */
+  .pafl-team-panel {
+    background: rgba(13,17,23,0.96);
+    border: 1px solid rgba(197,164,78,0.5);
+    border-radius: 8px;
+    padding: 12px 16px;
+    min-width: 200px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+  }
+  .pafl-panel-city {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    color: #c5a44e;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(197,164,78,0.3);
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  .pafl-panel-team {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+  }
+  .pafl-panel-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    flex-shrink: 0;
+  }
+  .pafl-panel-dot.pafl-pd3a { background: #e74c3c; }
+  .pafl-panel-dot.pafl-pd2a { background: #3498db; }
+  .pafl-panel-name {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .pafl-panel-name.pafl-pn3a { color: #ff8a8a; }
+  .pafl-panel-name.pafl-pn2a { color: #74b9ff; }
+  .pafl-panel-div {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .pafl-panel-div.pafl-pvd3a { color: #e74c3c; }
+  .pafl-panel-div.pafl-pvd2a { color: #3498db; }
+  .pafl-panel-loc {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 500;
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 1px;
+    text-align: center;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  /* Override leaflet popup for our panels */
+  .pafl-map-wrap .leaflet-popup-content-wrapper {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  .pafl-map-wrap .leaflet-popup-content {
+    margin: 0 !important;
+  }
+  .pafl-map-wrap .leaflet-popup-tip-container { display: none !important; }
+</style>
+
+<div class="pafl-map-wrap">
+  <div class="pafl-map-header">
+    <div>
+      <div class="pafl-map-title">PAFL TEAM LOCATIONS</div>
+      <div class="pafl-map-sub">2026 Season · 17 Teams · Click a city to see teams</div>
+    </div>
+    <div class="pafl-map-legend">
+      <div class="pafl-map-legend-item"><div class="pafl-map-legend-dot pafl-l3a"></div><div class="pafl-map-legend-text">3A</div></div>
+      <div class="pafl-map-legend-item"><div class="pafl-map-legend-dot pafl-l2a"></div><div class="pafl-map-legend-text">2A</div></div>
+    </div>
+  </div>
+  <div id="pafl-team-map">
+    <div id="pafl-leaflet-map" style="position:absolute;top:0;left:0;width:100%;height:100%;"></div>
+  </div>
+  <div class="pafl-map-footer">
+    <div class="pafl-map-footer-text">Ohio · Pennsylvania · Michigan · West Virginia</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var regions = [
+    {
+      city: "Detroit",
+      state: "MI",
+      lat: 42.3314, lng: -83.0458,
+      teams: [
+        { name: "Detroit Raiders", div: "3A" },
+        { name: "Michigan Hurricanes", div: "3A" }
+      ]
+    },
+    {
+      city: "Cleveland",
+      state: "OH",
+      lat: 41.4993, lng: -81.6944,
+      teams: [
+        { name: "Cleveland Broncos", div: "3A" },
+        { name: "Cleveland Cobras", div: "2A" }
+      ]
+    },
+    {
+      city: "Pittsburgh Area",
+      state: "PA",
+      lat: 40.52, lng: -80.05,
+      teams: [
+        { name: "Steel City Bobcats", div: "3A", loc: "Pittsburgh" },
+        { name: "BC Arctic Bengals", div: "3A", loc: "Beaver County" },
+        { name: "Butler County Bears", div: "2A", loc: "Butler County" },
+        { name: "PA Dawgz", div: "2A", loc: "Pittsburgh" },
+        { name: "Tri County Rams", div: "2A", loc: "Pittsburgh" }
+      ]
+    },
+    {
+      city: "Columbus",
+      state: "OH",
+      lat: 39.9612, lng: -82.9988,
+      teams: [
+        { name: "Columbus Fire", div: "3A" },
+        { name: "Mid Ohio Patriots", div: "2A" }
+      ]
+    },
+    {
+      city: "Akron / Canton",
+      state: "OH",
+      lat: 41.00, lng: -81.44,
+      teams: [
+        { name: "Cuyahoga Falls Rapids", div: "2A", loc: "Cuyahoga Falls" },
+        { name: "Stark County Wolfpack", div: "2A", loc: "Canton" }
+      ]
+    },
+    {
+      city: "Erie",
+      state: "PA",
+      lat: 42.1292, lng: -80.0851,
+      teams: [
+        { name: "Erie Express", div: "3A" }
+      ]
+    },
+    {
+      city: "Cincinnati",
+      state: "OH",
+      lat: 39.1031, lng: -84.5120,
+      teams: [
+        { name: "Cincinnati Hawks", div: "3A" }
+      ]
+    },
+    {
+      city: "Warren",
+      state: "OH",
+      lat: 41.2378, lng: -80.8184,
+      teams: [
+        { name: "Warren Pirates", div: "2A" }
+      ]
+    },
+    {
+      city: "Buckhannon",
+      state: "WV",
+      lat: 38.9940, lng: -80.2320,
+      teams: [
+        { name: "WV Leviathan", div: "2A" }
+      ]
+    }
+  ];
+
+  function buildPopup(region) {
+    var html = '<div class="pafl-team-panel">';
+    html += '<div class="pafl-panel-city">' + region.city + ', ' + region.state + '</div>';
+    region.teams.forEach(function(t) {
+      var is3A = t.div === "3A";
+      html += '<div class="pafl-panel-team">';
+      html += '<div class="pafl-panel-dot ' + (is3A ? 'pafl-pd3a' : 'pafl-pd2a') + '"></div>';
+      html += '<div class="pafl-panel-name ' + (is3A ? 'pafl-pn3a' : 'pafl-pn2a') + '">' + t.name + '</div>';
+      html += '<div class="pafl-panel-div ' + (is3A ? 'pafl-pvd3a' : 'pafl-pvd2a') + '">' + t.div + '</div>';
+      html += '</div>';
+    });
+    if (region.teams.length > 1 && region.teams.some(function(t) { return t.loc; })) {
+      var locs = region.teams.filter(function(t) { return t.loc; }).map(function(t) { return t.name.split(' ').slice(-1)[0] + ': ' + t.loc; });
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function initMap() {
+    var map = L.map('pafl-leaflet-map', {
+      center: [40.55, -81.5],
+      zoom: 7,
+      zoomControl: false,
+      scrollWheelZoom: false,
+      dragging: true,
+      touchZoom: false,
+      doubleClickZoom: false,
+      boxZoom: false,
+      keyboard: false
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19
+    }).addTo(map);
+
+    regions.forEach(function(region) {
+      var count = region.teams.length;
+      var has3A = region.teams.some(function(t) { return t.div === "3A"; });
+      var has2A = region.teams.some(function(t) { return t.div === "2A"; });
+
+      var icon = L.divIcon({
+        className: 'pafl-city-hub',
+        html: '<div class="pafl-hub-dot"><span class="pafl-hub-count">' + count + '</span></div><div class="pafl-hub-name">' + region.city + '</div>',
+        iconSize: [22, 42],
+        iconAnchor: [11, 11],
+        popupAnchor: [0, -18]
+      });
+
+      L.marker([region.lat, region.lng], { icon: icon }).addTo(map)
+        .bindPopup(buildPopup(region), {
+          maxWidth: 280,
+          className: 'pafl-team-popup'
+        });
+    });
+
+    var bounds = L.latLngBounds(regions.map(function(r) { return [r.lat, r.lng]; }));
+    map.fitBounds(bounds.pad(0.12));
+
+    setTimeout(function() { map.invalidateSize(); }, 300);
+  }
+
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(initMap, 100);
+  } else {
+    document.addEventListener('DOMContentLoaded', initMap);
+  }
+})();
+</script>
