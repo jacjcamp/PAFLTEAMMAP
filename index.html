@@ -20,7 +20,7 @@
   .leg-d.l3 { background: #e74c3c; }
   .leg-d.l2 { background: #3498db; }
   .leg-t { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; color: rgba(255,255,255,0.7); letter-spacing: 2px; }
-  #map { flex: 1; width: 100%; min-height: 400px; }
+  #map { flex: 1; width: 100%; min-height: 300px; }
   .ftr { background: #0d1117; padding: 8px 20px; text-align: center; border-top: 1px solid rgba(197,164,78,0.3); flex-shrink: 0; }
   .ftr-t { font-family: 'Barlow Condensed', sans-serif; font-weight: 500; font-size: 13px; letter-spacing: 3px; color: rgba(255,255,255,0.35); text-transform: uppercase; }
   .hub { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
@@ -117,9 +117,15 @@ function buildPopup(r) {
   h += '</div>';
   return h;
 }
+
+// Detect screen size and set zoom accordingly
+var isMobile = window.innerWidth < 768;
+var zoomLevel = isMobile ? 6.0 : 6.7;
+var centerLat = isMobile ? 40.4 : 40.55;
+
 var map = L.map('map', {
-  center: [40.55, -81.5],
-  zoom: 6.7,
+  center: [centerLat, -81.5],
+  zoom: zoomLevel,
   zoomControl: false,
   scrollWheelZoom: false,
   dragging: false,
@@ -144,7 +150,10 @@ regions.forEach(function(r) {
 });
 function fixMap() {
   map.invalidateSize();
-  map.setView([40.55, -81.5], 6.7);
+  var mobile = window.innerWidth < 768;
+  var z = mobile ? 6.0 : 6.7;
+  var c = mobile ? 40.4 : 40.55;
+  map.setView([c, -81.5], z);
 }
 setTimeout(fixMap, 100);
 setTimeout(fixMap, 300);
@@ -152,7 +161,7 @@ setTimeout(fixMap, 600);
 setTimeout(fixMap, 1000);
 setTimeout(fixMap, 2000);
 setTimeout(fixMap, 4000);
-window.addEventListener('resize', function() { setTimeout(fixMap, 100); });
+window.addEventListener('resize', function() { setTimeout(fixMap, 200); });
 window.addEventListener('message', function() { setTimeout(fixMap, 100); });
 </script>
 </body>
