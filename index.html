@@ -10,101 +10,38 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { width: 100%; height: 100%; background: #0d1117; overflow: hidden; }
-
-  .wrap {
-    width: 100%; height: 100%;
-    display: flex; flex-direction: column;
-    font-family: 'Oswald', sans-serif;
-  }
-
-  .hdr {
-    background: linear-gradient(180deg, #0d1117, #161b22);
-    padding: 14px 20px 10px;
-    display: flex; justify-content: space-between; align-items: center;
-    flex-wrap: wrap; gap: 8px;
-    border-bottom: 3px solid #c5a44e;
-    flex-shrink: 0;
-  }
+  .wrap { width: 100%; height: 100%; display: flex; flex-direction: column; font-family: 'Oswald', sans-serif; }
+  .hdr { background: linear-gradient(180deg, #0d1117, #161b22); padding: 14px 20px 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; border-bottom: 3px solid #c5a44e; flex-shrink: 0; }
   .hdr-title { font-weight: 800; font-size: 26px; color: #fff; letter-spacing: 3px; }
-  .hdr-sub {
-    font-family: 'Barlow Condensed', sans-serif; font-weight: 600;
-    font-size: 14px; letter-spacing: 3px; color: rgba(255,255,255,0.45); text-transform: uppercase;
-  }
+  .hdr-sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 3px; color: rgba(255,255,255,0.45); text-transform: uppercase; }
   .leg { display: flex; gap: 14px; }
   .leg-i { display: flex; align-items: center; gap: 6px; }
   .leg-d { width: 12px; height: 12px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.5); }
   .leg-d.l3 { background: #e74c3c; }
   .leg-d.l2 { background: #3498db; }
-  .leg-t {
-    font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
-    font-size: 14px; color: rgba(255,255,255,0.7); letter-spacing: 2px;
-  }
-
+  .leg-t { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; color: rgba(255,255,255,0.7); letter-spacing: 2px; }
   #map { flex: 1; width: 100%; min-height: 400px; }
-
-  .ftr {
-    background: #0d1117; padding: 8px 20px; text-align: center;
-    border-top: 1px solid rgba(197,164,78,0.3); flex-shrink: 0;
-  }
-  .ftr-t {
-    font-family: 'Barlow Condensed', sans-serif; font-weight: 500;
-    font-size: 13px; letter-spacing: 3px; color: rgba(255,255,255,0.35); text-transform: uppercase;
-  }
-
+  .ftr { background: #0d1117; padding: 8px 20px; text-align: center; border-top: 1px solid rgba(197,164,78,0.3); flex-shrink: 0; }
+  .ftr-t { font-family: 'Barlow Condensed', sans-serif; font-weight: 500; font-size: 13px; letter-spacing: 3px; color: rgba(255,255,255,0.35); text-transform: uppercase; }
   .hub { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-  .hub-dot {
-    width: 24px; height: 24px; border-radius: 50%;
-    background: radial-gradient(circle, #c5a44e 0%, #a08030 100%);
-    border: 3px solid #fff;
-    box-shadow: 0 0 14px rgba(197,164,78,0.7), 0 0 30px rgba(197,164,78,0.3);
-    display: flex; align-items: center; justify-content: center;
-    transition: transform 0.2s;
-  }
+  .hub-dot { width: 24px; height: 24px; border-radius: 50%; background: radial-gradient(circle, #c5a44e 0%, #a08030 100%); border: 3px solid #fff; box-shadow: 0 0 14px rgba(197,164,78,0.7), 0 0 30px rgba(197,164,78,0.3); display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
   .hub:hover .hub-dot { transform: scale(1.15); box-shadow: 0 0 20px rgba(197,164,78,1), 0 0 40px rgba(197,164,78,0.5); }
   .hub-n { font-family: 'Oswald', sans-serif; font-weight: 800; font-size: 12px; color: #000; line-height: 1; }
-  .hub-city {
-    font-family: 'Oswald', sans-serif; font-weight: 700;
-    font-size: 13px; color: #fff; letter-spacing: 1.5px; text-transform: uppercase;
-    margin-top: 4px; white-space: nowrap;
-    text-shadow: 0 1px 6px rgba(0,0,0,1), 0 0 10px rgba(0,0,0,0.8);
-  }
-
-  .panel {
-    background: rgba(13,17,23,0.97);
-    border: 1px solid rgba(197,164,78,0.5);
-    border-radius: 8px; padding: 14px 18px; min-width: 240px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.8);
-  }
-  .panel-city {
-    font-weight: 800; font-size: 16px; color: #c5a44e;
-    letter-spacing: 2px; text-transform: uppercase;
-    border-bottom: 1px solid rgba(197,164,78,0.3);
-    padding-bottom: 8px; margin-bottom: 8px; text-align: center;
-  }
+  .hub-city { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; color: #fff; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; white-space: nowrap; text-shadow: 0 1px 6px rgba(0,0,0,1), 0 0 10px rgba(0,0,0,0.8); }
+  .panel { background: rgba(13,17,23,0.97); border: 1px solid rgba(197,164,78,0.5); border-radius: 8px; padding: 14px 18px; min-width: 240px; box-shadow: 0 8px 30px rgba(0,0,0,0.8); }
+  .panel-city { font-weight: 800; font-size: 16px; color: #c5a44e; letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid rgba(197,164,78,0.3); padding-bottom: 8px; margin-bottom: 8px; text-align: center; }
   .panel-row { display: flex; align-items: center; gap: 8px; padding: 5px 0; }
   .panel-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid #fff; flex-shrink: 0; }
   .panel-dot.pd3 { background: #e74c3c; }
   .panel-dot.pd2 { background: #3498db; }
-  .panel-link {
-    font-family: 'Oswald', sans-serif;
-    font-weight: 700; font-size: 14px; letter-spacing: 0.5px; text-transform: uppercase;
-    text-decoration: none; transition: opacity 0.15s;
-  }
+  .panel-link { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 0.5px; text-transform: uppercase; text-decoration: none; transition: opacity 0.15s; }
   .panel-link:hover { opacity: 0.75; text-decoration: underline; }
   .panel-link.pn3 { color: #ff8a8a; }
   .panel-link.pn2 { color: #74b9ff; }
-  .panel-fb {
-    font-family: 'Barlow Condensed', sans-serif; font-weight: 600;
-    font-size: 10px; color: rgba(255,255,255,0.25); letter-spacing: 1px;
-    margin-left: 4px; text-transform: uppercase;
-  }
-  .panel-dv {
-    font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
-    font-size: 11px; letter-spacing: 1px; margin-left: auto;
-  }
+  .panel-fb { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 10px; color: rgba(255,255,255,0.25); letter-spacing: 1px; margin-left: 4px; text-transform: uppercase; }
+  .panel-dv { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 1px; margin-left: auto; }
   .panel-dv.pv3 { color: #e74c3c; }
   .panel-dv.pv2 { color: #3498db; }
-
   .leaflet-popup-content-wrapper { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
   .leaflet-popup-content { margin: 0 !important; }
   .leaflet-popup-tip-container { display: none !important; }
@@ -128,7 +65,6 @@
     <div class="ftr-t">Ohio · Pennsylvania · Michigan · West Virginia</div>
   </div>
 </div>
-
 <script>
 var regions = [
   { city: "Detroit", state: "MI", lat: 42.3314, lng: -83.0458, teams: [
@@ -167,7 +103,6 @@ var regions = [
     { name: "WV Leviathan", div: "2A", fb: "https://www.facebook.com/WVLEVIATHANFOOTBALL" }
   ]}
 ];
-
 function buildPopup(r) {
   var h = '<div class="panel"><div class="panel-city">' + r.city + ', ' + r.state + '</div>';
   r.teams.forEach(function(t) {
@@ -182,12 +117,9 @@ function buildPopup(r) {
   h += '</div>';
   return h;
 }
-
-// Use fixed center and zoom instead of fitBounds
-// This guarantees the same view regardless of container size
 var map = L.map('map', {
   center: [40.55, -81.5],
-  zoom: 7,
+  zoom: 6.7,
   zoomControl: false,
   scrollWheelZoom: false,
   dragging: false,
@@ -196,11 +128,9 @@ var map = L.map('map', {
   boxZoom: false,
   keyboard: false
 });
-
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
   maxZoom: 19
 }).addTo(map);
-
 regions.forEach(function(r) {
   var icon = L.divIcon({
     className: 'hub',
@@ -212,11 +142,9 @@ regions.forEach(function(r) {
   L.marker([r.lat, r.lng], { icon: icon }).addTo(map)
     .bindPopup(buildPopup(r), { maxWidth: 300 });
 });
-
-// Handle iframe resize — keep rechecking size
 function fixMap() {
   map.invalidateSize();
-  map.setView([40.55, -81.5], 7);
+  map.setView([40.55, -81.5], 6.7);
 }
 setTimeout(fixMap, 100);
 setTimeout(fixMap, 300);
@@ -224,16 +152,8 @@ setTimeout(fixMap, 600);
 setTimeout(fixMap, 1000);
 setTimeout(fixMap, 2000);
 setTimeout(fixMap, 4000);
-
-// Also listen for any resize events
-window.addEventListener('resize', function() {
-  setTimeout(fixMap, 100);
-});
-
-// Message from parent frame
-window.addEventListener('message', function() {
-  setTimeout(fixMap, 100);
-});
+window.addEventListener('resize', function() { setTimeout(fixMap, 100); });
+window.addEventListener('message', function() { setTimeout(fixMap, 100); });
 </script>
 </body>
 </html>
